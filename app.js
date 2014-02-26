@@ -128,6 +128,8 @@ function userNames(users) {
 		var user = users[i];
 		if (user.lost == true){
 			str += user.name + 'lost!<br />';
+		}else if(user.won == true){
+			str += user.name + 'won!<br />';
 		}else{
 			str += user.name + '<br />';
 		}
@@ -191,6 +193,13 @@ function detectCollisons() {
 						'users' : users
 					});
 				}
+			}
+			if(users[j].location.y<0){
+				users[j].won = true;
+				io.sockets.emit("users", {
+						'names' : userNames(users),
+						'users' : users
+					});
 			}
 		}
 	}

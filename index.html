@@ -120,12 +120,13 @@
 					//sort array for leaderboard
 					var leaders = [];
 					leaders = data.users.sort(function(a, b) {
-						return b.location.y - a.location.y;
+						return a.location.y - b.location.y;
 					});
+					var leaderDivContent = "<strong>Leaders:</strong><br />"
 					for (var i = 0; i < leaders.length; i += 1) {
-						leaderboard.innerHTML = "<strong>Leaders:</strong><br />";
-						leaderboard.innerHTML += leaders[i].name + "<br />";
+						leaderDivContent += leaders[i].name + "<br />";
 					}
+					leaderboard.innerHTML = leaderDivContent;
 					ctx.clearRect(0, 0, c.width, c.height);
 
 					var ctxSquare = c.getContext('2d');
