@@ -88,7 +88,7 @@
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 				socket.on('lose', function(data) {
-					alert(data + "  loses!");
+					console.log(data + "  loses!");
 				});
 
 				socket.on('draw', function(data) {
@@ -98,7 +98,8 @@
 						return b.location.y - a.location.y;
 					});
 					for (var i = 0; i < leaders.length; i += 1) {
-						leaderboard.innerHTML = "<strong>Leaders:</strong><br />" + leaders[i].name + "<br />";
+						leaderboard.innerHTML = "<strong>Leaders:</strong><br />";
+						leaderboard.innerHTML += leaders[i].name + "<br />";
 					}
 					ctx.clearRect(0, 0, c.width, c.height);
 
@@ -134,9 +135,7 @@
 
 					for (var i = 0; i < data.users.length; i += 1) {
 						ctx.beginPath();
-						// ctx.rect(data.users[i].location.x, data.users[i].location.y, 50, 50);
-						// ctx.fillStyle = 'red';
-						// 					ctx.fill();
+
 						var frog = new Image();
 						frog.src = "http://image.xboxlive.com/global/t.58410818/tile/0/28005";
 						ctx.drawImage(frog, data.users[i].location.x, data.users[i].location.y);

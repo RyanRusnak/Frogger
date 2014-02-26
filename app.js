@@ -126,7 +126,11 @@ function userNames(users) {
 	var str = '';
 	for (var i = 0; i < users.length; i++) {
 		var user = users[i];
-		str += user.name + '<br />';
+		if (user.lost == true){
+			str += user.name + 'lost!<br />';
+		}else{
+			str += user.name + '<br />';
+		}
 	}
 	return str;
 }
@@ -138,6 +142,8 @@ function newUserLocation() {
 var addUser = function() {
 	var user = {
 		id : users.length,
+		won : false,
+		lost : false,
 		name : "New User" + (users.length + 1),
 		location : {
 			x : users.length * 60 + 10,
@@ -145,21 +151,16 @@ var addUser = function() {
 		}
 	};
 	users.push(user);
-	// updateUsers();
 	return user;
 };
 var removeUser = function(user) {
 	for (var i = 0; i < users.length; i++) {
 		if (user.name === users[i].name) {
 			users.splice(i, 1);
-			// updateUsers();
 			return;
 		}
 	}
 };
-// var updateUsers = function() {
-// 	io.sockets.emit("userNames", userNames(users));
-// }
 
 function Car(width, height, x, y) {
 	this.width = width;
@@ -182,7 +183,13 @@ function detectCollisons() {
 			if (Math.abs((cars[i].x - users[j].location.x)) < 50) {
 				if (Math.abs((cars[i].y - users[j].location.y)) < 50) {
 					var loser = users[j];
-					io.sockets.emit("lose", loser.name);
+					users[j].location.y = 540;
+					users[j].lost = true;
+					// io.sockets.emit("lose", loser.name);                ///may not need a lose event
+					io.sockets.emit("users", {
+						'names' : userNames(users),
+						'users' : users
+					});
 				}
 			}
 		}
