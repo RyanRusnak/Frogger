@@ -142,3 +142,42 @@ var removeUser = function(user) {
 // var updateUsers = function() {
 // 	io.sockets.emit("userNames", userNames(users));
 // }
+
+function Car(width, height, x,y)
+{
+	this.width = width;
+	this.height = height;
+	this.x = x;
+	this.y = y;
+}
+var c1 = new Car(20,20,100, 400);
+var c2 = new Car(20,20,400, 400);
+var c3 = new Car(20,20,100, 200);
+var c4 = new Car(20,20,400, 200);
+var cars = [c1, c2, c3,c4];
+
+function detectCollisons(){
+	for (var i=0; i<cars.length; i+=1){
+		for (var i=0; i<cars.length; i+=1){
+			//detect collision
+		}
+	}
+	io.sockets.emit("lose", loser.name);
+}
+var speed = 2;
+setInterval(function(){
+	for (var i=0; i<cars.length; i+=1){
+		if (cars[i].x < 100){
+			speed = 2;
+			cars[i].x += speed;
+		}else if(cars[i].x > 850){
+			speed -=2;
+			cars[i].x += speed;
+		}else{
+			cars[i].x += speed;
+		}
+	}
+	io.sockets.emit("draw", {'cars':cars, 'users':users});
+},100);
+
+

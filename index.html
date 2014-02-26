@@ -39,39 +39,9 @@
 				 	});
 				}
 
-
-				function relMouseCoords(event){
-				    var totalOffsetX = 0;
-				    var totalOffsetY = 0;
-				    var canvasX = 0;
-				    var canvasY = 0;
-				    var currentElement = this;
-
-				    do{
-				        totalOffsetX += currentElement.offsetLeft - currentElement.scrollLeft;
-				        totalOffsetY += currentElement.offsetTop - currentElement.scrollTop;
-				    }
-				    while(currentElement = currentElement.offsetParent)
-
-				    canvasX = event.pageX - totalOffsetX;
-				    canvasY = event.pageY - totalOffsetY;
-
-				    return {x:canvasX, y:canvasY}
-				}
-				HTMLCanvasElement.prototype.relMouseCoords = relMouseCoords;
-
 				var c = document.getElementById("mo-canvas");
 				var ctx = c.getContext("2d");
-
-				// background image   NOTE: loads after users are drawn so it will hide the users. TODO: add callback
-				// var background = new Image();
-				// background.src = 'https://s3.amazonaws.com/2014Portfolio/socket-i-mo.png';
-		        // background.onload = function() {
-		        // 	ctx.drawImage(background, 0, 0, c.width, c.height);
-		        // };
 		        
-		        
-
 				var welcome = document.getElementById("welcome");
 				var allUsers = document.getElementById("users");
 				var updateNameInput = document.getElementById("updateNameInput");
@@ -79,45 +49,31 @@
 				var socket = io.connect(window.location.hostname);
 				socket.on('welcome', function (data) {
 					welcome.innerHTML = "Welcome  <strong>" + data['currentUser'].name + "</strong>";
-			        drawUsers(data.users);
 			        allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 				socket.on('users', function (data) {
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
-					drawUsers(data.users);
-				});
-				socket.on('userNames', function (data) {
-					// console.log("fired");
-					// console.log(data.names);
-					// allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 
-				socket.on('updateLocation', function (data) {
-					drawUsers(data);
-				});
-				// socket.on('updateNames', function (data) {
-				// 	for (var i = 0; i < users.length; i+=1){
-				// 		console.log(data[i]);
-				// 	}
-				// });
-
-				function drawUsers(users){
-					//clear canvas
+				socket.on('draw', function (data) {
 					ctx.clearRect(0, 0, c.width, c.height);
-					// ctx.drawImage(background, 0, 0, c.width, c.height);
-
-					for (var i = 0; i < users.length; i+=1){
+					for (var k = 0; k < data.cars.length; k+=1){
 						ctx.beginPath();
-						// ctx.arc(users[i].location.x,users[i].location.y,40,0,2*Math.PI);   <= circle
-						ctx.rect(users[i].location.x, users[i].location.y, 50, 50);
+						ctx.rect(data.cars[k].x, data.cars[k].y, 50, 50);
+						ctx.fillStyle = 'blue';
+      					ctx.fill();
+					}
+
+					for (var i = 0; i < data.users.length; i+=1){
+						ctx.beginPath();
+						ctx.rect(data.users[i].location.x, data.users[i].location.y, 50, 50);
 						ctx.fillStyle = 'red';
       					ctx.fill();
       					ctx.font = "12px Arial";
-						ctx.fillText(users[i].name,users[i].location.x,users[i].location.y);
-						// ctx.stroke();
+						ctx.fillText(data.users[i].name,data.users[i].location.x,data.users[i].location.y);
 					}
-					detectCollisions(users);
-				}
+					
+				});
 			
 				document.onkeydown = checkKey;
 				function checkKey(e) {
@@ -132,61 +88,10 @@
 				    	socket.emit("onKeyPress", "down");
 				    }
 				}
-				// document.onkeyup=function(e){console.log(e)};
 				updateNameButton.onclick=function(){
 					welcome.innerHTML = "Welcome "+ updateNameInput.value + "</strong>";
 					socket.emit("UpdateUserName", updateNameInput.value);
 				};	
-				var car = {
-					x: 0,
-					y: 350,
-					speed: 5
-				};
-
-				function animate() {
-
-				    reqAnimFrame = window.mozRequestAnimationFrame    ||
-				                window.webkitRequestAnimationFrame ||
-				                window.msRequestAnimationFrame     ||
-				                window.oRequestAnimationFrame
-				                ;
-
-				    reqAnimFrame(animate);
-
-				    car.x += car.speed;
-
-				    if(car.x <= 0 || car.x >= 475){
-				        car.speed = -car.speed;
-				    }
-
-				    draw();
-				}
-				function detectCollisions(users){
-					for (var i = 0; i < users.length; i+=1){
-						if (Math.abs((users[i].location.y - car.y)) < 50){
-							if((Math.abs(users[i].location.x - car.x))<50){
-								console.log("game over");
-							}
-						}
-						ctx.rect(users[i].location.x, users[i].location.y, 50, 50);
-					}
-				}
-				function isCollide(a, b) {
-				    return !(
-				        ((a.y + a.height) < (b.y)) ||
-				        (a.y > (b.y + b.height)) ||
-				        ((a.x + a.width) < b.x) ||
-				        (a.x > (b.x + b.width))
-				    );
-				}
-
-				function draw() {
-				    ctx.clearRect(0, car.y, c.width, 25);
-				    ctx.fillStyle = "#ff00ff";
-				    ctx.fillRect(car.x, car.y, 25, 25);
-				}
-
-				animate();
 
 			}
 		</script>
