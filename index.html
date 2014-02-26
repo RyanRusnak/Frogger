@@ -2,10 +2,33 @@
 <html>
 	<head>
 		<title>Welcome to Sockets i-mo</title>
+		<style type="text/css">
+			#left, #right, #up, #down {
+				background: #4c4c4c; /* Old browsers */
+				background: -moz-linear-gradient(top,  #4c4c4c 0%, #595959 12%, #666666 25%, #474747 39%, #2c2c2c 50%, #000000 51%, #111111 60%, #2b2b2b 76%, #1c1c1c 91%, #131313 100%); /* FF3.6+ */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4c4c4c), color-stop(12%,#595959), color-stop(25%,#666666), color-stop(39%,#474747), color-stop(50%,#2c2c2c), color-stop(51%,#000000), color-stop(60%,#111111), color-stop(76%,#2b2b2b), color-stop(91%,#1c1c1c), color-stop(100%,#131313)); /* Chrome,Safari4+ */
+				background: -webkit-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* Chrome10+,Safari5.1+ */
+				background: -o-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* Opera 11.10+ */
+				background: -ms-linear-gradient(top,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* IE10+ */
+				background: linear-gradient(to bottom,  #4c4c4c 0%,#595959 12%,#666666 25%,#474747 39%,#2c2c2c 50%,#000000 51%,#111111 60%,#2b2b2b 76%,#1c1c1c 91%,#131313 100%); /* W3C */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#131313',GradientType=0 ); /* IE6-9 */
+				color: #fff;
+				font-size: 40px;
+				font-weight: bold;
+				padding: 20px 50px;
+				margin: 15px 25px;
+				-webkit-appearance: none;
+				border-radius: 20px;
+			}
+		</style>
 	</head>
 	<body class="main">
 		<div id="game-screen">
-			<div id="welcome"></div><input id="updateNameInput" placeholder="@whoAreYou?"> <button id="updateNameButton">Update Name</button>
+			<div id="welcome"></div>
+			<input id="updateNameInput" placeholder="@whoAreYou?">
+			<button id="updateNameButton">
+				Update Name
+			</button>
 			<hr />
 			<div id="users" style="float:right;"></div>
 			<div id="leaderboard" style="float:right;"></div>
@@ -13,101 +36,138 @@
 		</div>
 		<!-- Dress up this div and the buttons to make it look like an NES controller -->
 		<div id="game-pad" style="display:none;">
-			<button id="left">Left</button>
-			<button id="right">Right</button>
-			<button id="up">Up</button>
-			<button id="down">Down</button>
+			<button id="left">
+				Left
+			</button>
+			<button id="right">
+				Right
+			</button>
+			<button id="up">
+				Up
+			</button>
+			<button id="down">
+				Down
+			</button>
 		</div>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-		<script src="/socket.io/socket.io.js"> </script>
+		<script src="/socket.io/socket.io.js"></script>
 		<script type="text/javascript">
 			window.onload = function() {
-				if( /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
-				 //hide pretty much everything but the game pad
-				 	$("#game-screen").hide();
-				 	$("#game-pad").show();
-				 	$("#left").click(function(){
-				 		socket.emit("onKeyPress", "left");
-				 	});
-				 	$("#right").click(function(){
-				 		socket.emit("onKeyPress", "right");
-				 	});
-				 	$("#up").click(function(){
-				 		socket.emit("onKeyPress", "up");
-				 	});
-				 	$("#down").click(function(){
-				 		socket.emit("onKeyPress", "down");
-				 	});
+				if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+					//hide pretty much everything but the game pad
+					$("#game-screen").hide();
+					$("#game-pad").show();
+					$("#left").click(function() {
+						socket.emit("onKeyPress", "left");
+					});
+					$("#right").click(function() {
+						socket.emit("onKeyPress", "right");
+					});
+					$("#up").click(function() {
+						socket.emit("onKeyPress", "up");
+					});
+					$("#down").click(function() {
+						socket.emit("onKeyPress", "down");
+					});
 				}
 
 				var c = document.getElementById("mo-canvas");
 				var ctx = c.getContext("2d");
-		        
+
 				var welcome = document.getElementById("welcome");
 				var allUsers = document.getElementById("users");
 				var leaderboard = document.getElementById("leaderboard");
 				var updateNameInput = document.getElementById("updateNameInput");
 				var updateNameButton = document.getElementById("updateNameButton");
 				var socket = io.connect(window.location.hostname);
-				socket.on('welcome', function (data) {
+				socket.on('welcome', function(data) {
 					welcome.innerHTML = "Welcome  <strong>" + data['currentUser'].name + "</strong>";
-			        allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
-				});
-				socket.on('users', function (data) {
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
-				socket.on('lose', function (data) {
-					alert(data + "  loses!")
+				socket.on('users', function(data) {
+					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
+				});
+				socket.on('lose', function(data) {
+					alert(data + "  loses!");
 				});
 
-				socket.on('draw', function (data) {
+				socket.on('draw', function(data) {
 					//sort array for leaderboard
 					var leaders = [];
-					leaders = data.users.sort(function(a,b){return b.location.y-a.location.y});
-					for (var i = 0; i < leaders.length; i+=1){
-						leaderboard.innerHTML = "<strong>Leaders:</strong><br />" + leaders[i].name +"<br />";
+					leaders = data.users.sort(function(a, b) {
+						return b.location.y - a.location.y;
+					});
+					for (var i = 0; i < leaders.length; i += 1) {
+						leaderboard.innerHTML = "<strong>Leaders:</strong><br />" + leaders[i].name + "<br />";
 					}
 					ctx.clearRect(0, 0, c.width, c.height);
-					for (var k = 0; k < data.cars.length; k+=1){
+
+					var ctxSquare = c.getContext('2d');
+					ctxSquare.fillStyle = '#222222';
+					ctxSquare.fillRect(0, 180, 950, 300);
+					var ctxGrass = c.getContext('2d');
+					ctxGrass.fillStyle = '#47581A';
+					ctxGrass.fillRect(0, 0, 950, 180);
+					var ctxGrass2 = c.getContext('2d');
+					ctxGrass2.fillStyle = '#47581A';
+					ctxGrass2.fillRect(0, 480, 950, 120);
+
+					var ctxRoadMark1 = c.getContext('2d');
+					ctxRoadMark1.fillStyle = '#fff';
+					ctxRoadMark1.fillRect(40, 320, 190, 20);
+
+					var ctxRoadMark2 = c.getContext('2d');
+					ctxRoadMark2.fillStyle = '#fff';
+					ctxRoadMark2.fillRect(350, 320, 190, 20);
+
+					var ctxRoadMark3 = c.getContext('2d');
+					ctxRoadMark3.fillStyle = '#fff';
+					ctxRoadMark3.fillRect(660, 320, 190, 20);
+					var ctxCircle = c.getContext('2d');
+
+					for (var k = 0; k < data.cars.length; k += 1) {
 						ctx.beginPath();
 						ctx.rect(data.cars[k].x, data.cars[k].y, 50, 50);
 						ctx.fillStyle = 'blue';
-      					ctx.fill();
+						ctx.fill();
 					}
 
-					for (var i = 0; i < data.users.length; i+=1){
+					for (var i = 0; i < data.users.length; i += 1) {
 						ctx.beginPath();
 						// ctx.rect(data.users[i].location.x, data.users[i].location.y, 50, 50);
 						// ctx.fillStyle = 'red';
-      // 					ctx.fill();
+						// 					ctx.fill();
 						var frog = new Image();
 						frog.src = "http://image.xboxlive.com/global/t.58410818/tile/0/28005";
-      					ctx.drawImage(frog, data.users[i].location.x, data.users[i].location.y);
-      					ctx.font = "12px Arial";
-						ctx.fillText(data.users[i].name,data.users[i].location.x,data.users[i].location.y);
+						ctx.drawImage(frog, data.users[i].location.x, data.users[i].location.y);
+						ctx.font = "12px Arial";
+						ctx.fillText(data.users[i].name, data.users[i].location.x, data.users[i].location.y);
 					}
-					
+
 				});
-			
+
 				document.onkeydown = checkKey;
 				function checkKey(e) {
-				    e = e || window.event;
-				    if (e.keyCode == '37') {
-				        socket.emit("onKeyPress", "left");
-				    }else if (e.keyCode == '38') {
+					e = e || window.event;
+					if (e.keyCode == '37') {
+						socket.emit("onKeyPress", "left");
+					} else if (e.keyCode == '38') {
 						socket.emit("onKeyPress", "up");
-				    }else if (e.keyCode == '39') {
-				    	socket.emit("onKeyPress", "right");
-				    }else if (e.keyCode == '40') {
-				    	socket.emit("onKeyPress", "down");
-				    }
+					} else if (e.keyCode == '39') {
+						socket.emit("onKeyPress", "right");
+					} else if (e.keyCode == '40') {
+						socket.emit("onKeyPress", "down");
+					}
 				}
-				updateNameButton.onclick=function(){
-					welcome.innerHTML = "Welcome "+ updateNameInput.value + "</strong>";
-					socket.emit("UpdateUserName", updateNameInput.value);
-				};	
 
-			}
+
+				updateNameButton.onclick = function() {
+					welcome.innerHTML = "Welcome " + updateNameInput.value + "</strong>";
+					socket.emit("UpdateUserName", updateNameInput.value);
+				};
+
+			};
 		</script>
+
 	</body>
 </html>

@@ -1,11 +1,12 @@
 var handler = function(req, res) {
-	fs.readFile('./index.html', function (err, data) {
-    if(err) throw err;
-	res.writeHead(200);
-	res.end(data);
+	fs.readFile('./index.html', function(err, data) {
+		if (err)
+			throw err;
+		res.writeHead(200);
+		res.end(data);
 	});
-}
- //============================ Begin Mongoose ================================///
+};
+//============================ Begin Mongoose ================================///
 // Pre- Heoku mongoose stuff
 // var mongoose = require('mongoose');
 // mongoose.connect('mongodb://localhost/test');
@@ -17,7 +18,7 @@ var handler = function(req, res) {
 
 // //Post heroku mongoose stuff
 // var http = require ('http');             // For serving a basic web page.
-// var mongoose = require ("mongoose"); // The reason for this demo.        
+// var mongoose = require ("mongoose"); // The reason for this demo.
 
 // // Here we find an appropriate database to connect to, defaulting to
 // // localhost if we don't find one.
@@ -53,7 +54,6 @@ var handler = function(req, res) {
 // });
 //============================ End Mongoose ================================///
 
-
 var app = require('http').createServer(handler);
 var io = require('socket.io').listen(app);
 var fs = require('fs');
@@ -63,104 +63,124 @@ var port = process.env.PORT || 3000;
 app.listen(port);
 
 // socket.io
-io.sockets.on('connection', function (socket) {
+io.sockets.on('connection', function(socket) {
 	var user = addUser();
-	var data = {'currentUser' : user, 'users':users, 'names':userNames(users)};
+	var data = {
+		'currentUser' : user,
+		'users' : users,
+		'names' : userNames(users)
+	};
 	socket.emit("welcome", data);
-	socket.on('disconnect', function () {
+	socket.on('disconnect', function() {
 		removeUser(user);
 	});
-		socket.on("onKeyPress", function(k) {
-			for(var i=0; i<users.length; i++) {
-				if(user.name === users[i].name) {
-					if (k == 'left') {
-						users[i].location.x -=50;
-				    }else if (k == 'up') {
-				    	users[i].location.y -=50
-				    }else if (k == 'right') {
-				    	users[i].location.x +=50
-				    }else if (k == 'down') {
-				    	users[i].location.y +=50
-				    }
-					break;
+	socket.on("onKeyPress", function(k) {
+		for (var i = 0; i < users.length; i++) {
+			if (user.name === users[i].name) {
+				if (k == 'left') {
+					if (data.users[i].location.x > 20) {
+						users[i].location.x -= 50;
+					}
+				} else if (k == 'right') {
+					if (data.users[i].location.x < 800) {
+						users[i].location.x += 50;
+					}
+				} else if (k == 'up') {
+					if (data.users[i].location.y > 20) {
+						users[i].location.y -= 50;
+					}
+				} else if (k == 'down') {
+					if (data.users[i].location.y < 500) {
+						users[i].location.y += 50;
+					}
 				}
+				break;
 			}
+		}
 		io.sockets.emit("updateLocation", users);
 	});
 
-		socket.on("UpdateUserName", function(n) {;
-			for(var i=0; i<users.length; i++) {
-				if(user.id === users[i].id) {
-					users[i].name = n;
-					// var dbUser = new User({ name: n });    //create user in database
-					// dbUser.save(function(err, thor) {
-					// 	if (err) return console.error(err);
-					// 	console.dir(thor);
-					// });										// end create user
-					break;
-				}
+	socket.on("UpdateUserName", function(n) {;
+		for (var i = 0; i < users.length; i++) {
+			if (user.id === users[i].id) {
+				users[i].name = n;
+				// var dbUser = new User({ name: n });    //create user in database
+				// dbUser.save(function(err, thor) {
+				// 	if (err) return console.error(err);
+				// 	console.dir(thor);
+				// });										// end create user
+				break;
 			}
-			io.sockets.emit("users", {'names':userNames(users), 'users':users});
+		}
+		io.sockets.emit("users", {
+			'names' : userNames(users),
+			'users' : users
+		});
 	});
 
 });
 
 var users = [];
 
-function userNames(users){
+function userNames(users) {
 	var str = '';
-	for(var i=0; i<users.length; i++) {
+	for (var i = 0; i < users.length; i++) {
 		var user = users[i];
 		str += user.name + '<br />';
 	}
 	return str;
 }
 
-function newUserLocation(){
+function newUserLocation() {
 
 }
 
 var addUser = function() {
 	var user = {
-		id: users.length,
-		name: "New User"+(users.length+1),
-		location: {x:users.length * 60 + 10, y:540}
-	}
+		id : users.length,
+		name : "New User" + (users.length + 1),
+		location : {
+			x : users.length * 60 + 10,
+			y : 540
+		}
+	};
 	users.push(user);
 	// updateUsers();
 	return user;
-}
+};
 var removeUser = function(user) {
-	for(var i=0; i<users.length; i++) {
-		if(user.name === users[i].name) {
+	for (var i = 0; i < users.length; i++) {
+		if (user.name === users[i].name) {
 			users.splice(i, 1);
 			// updateUsers();
 			return;
 		}
 	}
-}
+};
 // var updateUsers = function() {
 // 	io.sockets.emit("userNames", userNames(users));
 // }
 
-function Car(width, height, x,y)
-{
+function Car(width, height, x, y) {
 	this.width = width;
 	this.height = height;
 	this.x = x;
 	this.y = y;
 }
-var c1 = new Car(20,20,100, 400);
-var c2 = new Car(20,20,400, 400);
-var c3 = new Car(20,20,100, 200);
-var c4 = new Car(20,20,400, 200);
-var cars = [c1, c2, c3,c4];
 
-function detectCollisons(){
-	for (var i=0; i<cars.length; i+=1){
-		for (var j=0; j<users.length; j+=1){
-			if (Math.abs((cars[i].x - users[j].location.x))<50){
-				if (Math.abs((cars[i].y - users[j].location.y))<50){
+var cars = [];
+setInterval(function() {
+	var c1 = new Car(20, 20, 0, 400);
+	var c2 = new Car(20, 20, 850, 200);
+	cars.push(c1);
+	cars.push(c2);
+}, 2000);
+
+function detectCollisons() {
+	for (var i = 0; i < cars.length; i += 1) {
+		for (var j = 0; j < users.length; j += 1) {
+			if (Math.abs((cars[i].x - users[j].location.x)) < 50) {
+				if (Math.abs((cars[i].y - users[j].location.y)) < 50) {
 					var loser = users[j];
 					io.sockets.emit("lose", loser.name);
 				}
@@ -168,21 +188,21 @@ function detectCollisons(){
 		}
 	}
 }
-var speed = 2;
-setInterval(function(){
-	for (var i=0; i<cars.length; i+=1){
-		if (cars[i].x < 100){
-			speed = 2;
+
+var speed = -10;
+setInterval(function() {
+	for (var i = 0; i < cars.length; i += 1) {
+		if (cars[i].y == 200) {// cars at top
 			cars[i].x += speed;
-		}else if(cars[i].x > 850){
-			speed -=2;
-			cars[i].x += speed;
-		}else{
-			cars[i].x += speed;
+		} else {// cars at bottom
+			cars[i].x += -speed;
 		}
 	}
-	io.sockets.emit("draw", {'cars':cars, 'users':users});
-	detectCollisons();
-},100);
 
+	io.sockets.emit("draw", {
+		'cars' : cars,
+		'users' : users
+	});
+	detectCollisons();
+}, 100);
 
