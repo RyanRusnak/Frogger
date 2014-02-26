@@ -72,16 +72,25 @@ io.sockets.on('connection', function (socket) {
 	});
 		socket.on("onKeyPress", function(k) {
 			for(var i=0; i<users.length; i++) {
+				console.log(users[i].location.x);
 				if(user.name === users[i].name) {
 					if (k == 'left') {
-						users[i].location.x -=50;
-				    }else if (k == 'up') {
-				    	users[i].location.y -=50
-				    }else if (k == 'right') {
-				    	users[i].location.x +=50
-				    }else if (k == 'down') {
-				    	users[i].location.y +=50
-				    }
+						if (users[i].location.x > 50){
+							users[i].location.x -=50;
+						}
+					}else if (k == 'up') {
+						if (users[i].location.y > 0){
+							users[i].location.y -=50;
+						}
+					}else if (k == 'right') {
+						if (users[i].location.x < 820){
+							users[i].location.x +=50;
+						}
+					}else if (k == 'down') {
+						if (users[i].location.y < 500){
+							users[i].location.y +=50;
+						}
+					}
 					break;
 				}
 			}
