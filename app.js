@@ -151,18 +151,18 @@ var addUser = function() {
 		location: {x:users.length * 60 + 10, y:540}
 	}
 	users.push(user);
-	updateUsers();
+	// updateUsers();
 	return user;
 }
 var removeUser = function(user) {
 	for(var i=0; i<users.length; i++) {
 		if(user.name === users[i].name) {
 			users.splice(i, 1);
-			updateUsers();
+			// updateUsers();
 			return;
 		}
 	}
 }
-var updateUsers = function() {
-	io.sockets.emit("userNames", userNames(users));
-}
+// var updateUsers = function() {
+// 	io.sockets.emit("userNames", userNames(users));
+// }

@@ -4,15 +4,41 @@
 		<title>Welcome to Sockets i-mo</title>
 	</head>
 	<body class="main">
-		<div id="welcome"></div><input id="updateNameInput" placeholder="@whoAreYou?"> <button id="updateNameButton">Update Name</button>
-		<hr />
-		<div id="users" style="float:right;"></div>
-		<canvas id="mo-canvas" width="900" height="600" style="border:1px solid #000000"></canvas>
-
+		<div id="game-screen">
+			<div id="welcome"></div><input id="updateNameInput" placeholder="@whoAreYou?"> <button id="updateNameButton">Update Name</button>
+			<hr />
+			<div id="users" style="float:right;"></div>
+			<canvas id="mo-canvas" width="900" height="600" style="border:1px solid #000000"></canvas>
+		</div>
+		<!-- Dress up this div and the buttons to make it look like an NES controller -->
+		<div id="game-pad" style="display:none;">
+			<button id="left">Left</button>
+			<button id="right">Right</button>
+			<button id="up">Up</button>
+			<button id="down">Down</button>
+		</div>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="/socket.io/socket.io.js"> </script>
 		<script type="text/javascript">
 			window.onload = function() {
+				if( /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+				 //hide pretty much everything but the game pad
+				 	$("#game-screen").hide();
+				 	$("#game-pad").show();
+				 	$("#left").click(function(){
+				 		socket.emit("onKeyPress", "left");
+				 	});
+				 	$("#right").click(function(){
+				 		socket.emit("onKeyPress", "right");
+				 	});
+				 	$("#up").click(function(){
+				 		socket.emit("onKeyPress", "up");
+				 	});
+				 	$("#down").click(function(){
+				 		socket.emit("onKeyPress", "down");
+				 	});
+				}
+
 
 				function relMouseCoords(event){
 				    var totalOffsetX = 0;
@@ -62,7 +88,9 @@
 					drawUsers(data.users);
 				});
 				socket.on('userNames', function (data) {
-					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
+					// console.log("fired");
+					// console.log(data.names);
+					// allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 
 				socket.on('updateLocation', function (data) {
