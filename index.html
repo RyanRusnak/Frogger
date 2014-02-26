@@ -55,7 +55,7 @@
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 				socket.on('lose', function (data) {
-					console.log(data + "  loses!")
+					alert(data + "  loses!")
 				});
 
 				socket.on('draw', function (data) {
