@@ -164,5 +164,5 @@ var removeUser = function(user) {
 	}
 }
 var updateUsers = function() {
-	io.sockets.emit("users", userNames(users));
+	io.sockets.emit("userNames", userNames(users));
 }
