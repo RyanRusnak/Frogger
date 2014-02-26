@@ -54,11 +54,12 @@
 				var socket = io.connect(window.location.hostname);
 				socket.on('welcome', function (data) {
 					welcome.innerHTML = "Welcome  <strong>" + data['currentUser'].name + "</strong>";
-			        	drawUsers(data.users);
+			        drawUsers(data.users);
+			        allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
 				socket.on('users', function (data) {
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
-					drawUsers(data.users);
+					// drawUsers(data.users);
 				});
 
 				socket.on('updateLocation', function (data) {

@@ -65,7 +65,7 @@ app.listen(port);
 // socket.io
 io.sockets.on('connection', function (socket) {
 	var user = addUser();
-	var data = {'currentUser' : user, 'users':users};
+	var data = {'currentUser' : user, 'users':users, 'names':userNames(users)};
 	socket.emit("welcome", data);
 	socket.on('disconnect', function () {
 		removeUser(user);
