@@ -8,6 +8,7 @@
 			<div id="welcome"></div><input id="updateNameInput" placeholder="@whoAreYou?"> <button id="updateNameButton">Update Name</button>
 			<hr />
 			<div id="users" style="float:right;"></div>
+			<div id="leaderboard" style="float:right;"></div>
 			<canvas id="mo-canvas" width="900" height="600" style="border:1px solid #000000"></canvas>
 		</div>
 		<!-- Dress up this div and the buttons to make it look like an NES controller -->
@@ -44,6 +45,7 @@
 		        
 				var welcome = document.getElementById("welcome");
 				var allUsers = document.getElementById("users");
+				var leaderboard = document.getElementById("leaderboard");
 				var updateNameInput = document.getElementById("updateNameInput");
 				var updateNameButton = document.getElementById("updateNameButton");
 				var socket = io.connect(window.location.hostname);
@@ -59,6 +61,12 @@
 				});
 
 				socket.on('draw', function (data) {
+					//sort array for leaderboard
+					var leaders = [];
+					leaders = data.users.sort(function(a,b){return b.location.y-a.location.y});
+					for (var i = 0; i < leaders.length; i+=1){
+						leaderboard.innerHTML = "<strong>Leaders:</strong><br />" + leaders[i].name +"<br />";
+					}
 					ctx.clearRect(0, 0, c.width, c.height);
 					for (var k = 0; k < data.cars.length; k+=1){
 						ctx.beginPath();
