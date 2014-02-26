@@ -76,7 +76,6 @@
 				var allUsers = document.getElementById("users");
 				var updateNameInput = document.getElementById("updateNameInput");
 				var updateNameButton = document.getElementById("updateNameButton");
-
 				var socket = io.connect(window.location.hostname);
 				socket.on('welcome', function (data) {
 					welcome.innerHTML = "Welcome  <strong>" + data['currentUser'].name + "</strong>";
@@ -117,29 +116,9 @@
 						ctx.fillText(users[i].name,users[i].location.x,users[i].location.y);
 						// ctx.stroke();
 					}
+					detectCollisions(users);
 				}
-
-				function mouseMove(event){
-					if (timer) clearInterval(timer);
-					if (event.which == 1) {
-				        coords = c.relMouseCoords(event);
-						socket.emit("canvasMouseDown", coords);
-					}
-				}
-
-				function mouseDown(event){
-					 timer=setInterval(function(){
-				        coords = c.relMouseCoords(event);
-						socket.emit("canvasMouseDown", coords);
-				     }, 50);
-				}
-
-				var timer;
-				c.addEventListener("mousedown", mouseDown);
-				c.addEventListener("mousemove", mouseMove);
-				c.addEventListener("mouseup", function(){
-				    if (timer) clearInterval(timer);
-				});			
+			
 				document.onkeydown = checkKey;
 				function checkKey(e) {
 				    e = e || window.event;
@@ -158,7 +137,56 @@
 					welcome.innerHTML = "Welcome "+ updateNameInput.value + "</strong>";
 					socket.emit("UpdateUserName", updateNameInput.value);
 				};	
-				
+				var car = {
+					x: 0,
+					y: 350,
+					speed: 5
+				};
+
+				function animate() {
+
+				    reqAnimFrame = window.mozRequestAnimationFrame    ||
+				                window.webkitRequestAnimationFrame ||
+				                window.msRequestAnimationFrame     ||
+				                window.oRequestAnimationFrame
+				                ;
+
+				    reqAnimFrame(animate);
+
+				    car.x += car.speed;
+
+				    if(car.x <= 0 || car.x >= 475){
+				        car.speed = -car.speed;
+				    }
+
+				    draw();
+				}
+				function detectCollisions(users){
+					for (var i = 0; i < users.length; i+=1){
+						if (Math.abs((users[i].location.y - car.y)) < 50){
+							if((Math.abs(users[i].location.x - car.x))<50){
+								console.log("game over");
+							}
+						}
+						ctx.rect(users[i].location.x, users[i].location.y, 50, 50);
+					}
+				}
+				function isCollide(a, b) {
+				    return !(
+				        ((a.y + a.height) < (b.y)) ||
+				        (a.y > (b.y + b.height)) ||
+				        ((a.x + a.width) < b.x) ||
+				        (a.x > (b.x + b.width))
+				    );
+				}
+
+				function draw() {
+				    ctx.clearRect(0, car.y, c.width, 25);
+				    ctx.fillStyle = "#ff00ff";
+				    ctx.fillRect(car.x, car.y, 25, 25);
+				}
+
+				animate();
 
 			}
 		</script>

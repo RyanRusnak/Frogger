@@ -88,34 +88,6 @@ io.sockets.on('connection', function (socket) {
 		io.sockets.emit("updateLocation", users);
 	});
 
-	socket.on("canvasMouseDown", function(l) {
-			for(var i=0; i<users.length; i++) {
-				if(user.name === users[i].name) {
-					//if mouse x is right then animate right
-					if (l.x > users[i].location.x){
-						users[i].location.x +=5;
-						//if mouse down is higher then animate higher
-						if(l.y < users[i].location.y){
-							users[i].location.y -=5;
-						//else animate lower
-						}else{
-							users[i].location.y +=5;
-						}
-					//else animate left
-					}else{
-						users[i].location.x -=5;
-						if(l.y < users[i].location.y){
-							users[i].location.y -=5;
-						//else animate lower
-						}else{
-							users[i].location.y +=5;
-						}
-					}
-					break;
-				}
-			}
-		io.sockets.emit("updateLocation", users);
-	});
 		socket.on("UpdateUserName", function(n) {;
 			for(var i=0; i<users.length; i++) {
 				if(user.id === users[i].id) {
@@ -142,6 +114,10 @@ function userNames(users){
 		str += user.name + '<br />';
 	}
 	return str;
+}
+
+function newUserLocation(){
+
 }
 
 var addUser = function() {
