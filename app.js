@@ -158,11 +158,15 @@ var cars = [c1, c2, c3,c4];
 
 function detectCollisons(){
 	for (var i=0; i<cars.length; i+=1){
-		for (var i=0; i<cars.length; i+=1){
-			//detect collision
+		for (var j=0; j<users.length; j+=1){
+			if (Math.abs((cars[i].x - users[j].location.x))<50){
+				if (Math.abs((cars[i].y - users[j].location.y))<50){
+					var loser = users[j];
+					io.sockets.emit("lose", loser.name);
+				}
+			}
 		}
 	}
-	io.sockets.emit("lose", loser.name);
 }
 var speed = 2;
 setInterval(function(){
@@ -178,6 +182,7 @@ setInterval(function(){
 		}
 	}
 	io.sockets.emit("draw", {'cars':cars, 'users':users});
+	detectCollisons();
 },100);
 
 

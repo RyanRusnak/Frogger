@@ -54,6 +54,9 @@
 				socket.on('users', function (data) {
 					allUsers.innerHTML = "<strong>Users:</strong><br />" + data.names;
 				});
+				socket.on('lose', function (data) {
+					console.log(data + "  loses!")
+				});
 
 				socket.on('draw', function (data) {
 					ctx.clearRect(0, 0, c.width, c.height);
