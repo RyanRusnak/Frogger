@@ -20,6 +20,11 @@
 				-webkit-appearance: none;
 				border-radius: 20px;
 			}
+			
+			#game-pad {
+				margin: 0px auto; 
+				width: 75%;
+			}
 		</style>
 	</head>
 	<body class="main">
@@ -35,19 +40,37 @@
 			<canvas id="mo-canvas" width="900" height="600" style="border:1px solid #000000"></canvas>
 		</div>
 		<!-- Dress up this div and the buttons to make it look like an NES controller -->
-		<div id="game-pad" style="display:none;">
-			<button id="left">
-				Left
-			</button>
-			<button id="right">
-				Right
-			</button>
-			<button id="up">
-				Up
-			</button>
-			<button id="down">
-				Down
-			</button>
+		<div id="game-pad" style="display: none;">
+			<table>
+				<tr>
+					<td></td>
+					<td>
+					<button id="up" style="float:left;">
+						Up
+					</button></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td>
+					<button id="left" style="float:left;">
+						Left
+					</button></td>
+					<td></td>
+					<td>
+					<button id="right" style="float:left;">
+						Right
+					</button></td>
+				</tr>
+
+				<tr>
+					<td></td>
+					<td>
+					<button id="down" style="float:left;">
+						Down
+					</button></td>
+					<td></td>
+				</tr>
+			</table>
 		</div>
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 		<script src="/socket.io/socket.io.js"></script>
